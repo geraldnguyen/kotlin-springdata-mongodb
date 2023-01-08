@@ -17,14 +17,25 @@ class CommentController {
     private lateinit var commentRepository: CommentRepository
 
     @GetMapping(value = [ "", "/" ])
-    fun listAll(@RequestParam(value = "name", required = false) name: String?): List<Comment> {
+    fun listAll(
+        @RequestParam(value = "email", required = false) email: String?,
+        @RequestParam(value = "name", required = false) name: String?,
+        @RequestParam(value = "text", required = false) text: String?,
+        @RequestParam(value = "_size", required = false, defaultValue = "10") size: Int,
+        @RequestParam(value = "_page", required = false, defaultValue = "0") page: Int
+    ): List<Comment> {
         lateinit var result: Page<Comment>
-        val page = Pageable.ofSize(10)
+        val pageable = Pageable.ofSize(size).withPage(page);
 
-        if (name.isNullOrBlank()) {
-            result = commentRepository.findAll(page)
-        } else {
-            result = commentRepository.findByNameContainingIgnoreCase(name, page)
+        when {
+            !email.isNullOrBlank() ->
+                result = commentRepository.findByEmailIgnoreCase(email, pageable)
+            !name.isNullOrBlank() ->
+                result = commentRepository.findByNameContainingIgnoreCase(name, pageable)
+            !text.isNullOrBlank() ->
+                result = commentRepository.findByTextContainingIgnoreCase(text, pageable)
+            else ->
+                result = commentRepository.findAll(pageable)
         }
 
         return result.content

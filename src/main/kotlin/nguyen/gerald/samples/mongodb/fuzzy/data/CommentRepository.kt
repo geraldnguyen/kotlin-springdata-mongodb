@@ -5,5 +5,8 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.mongodb.repository.MongoRepository
 
 interface CommentRepository : MongoRepository<Comment, String>{
+    fun findByEmailIgnoreCase(email: String, pageable: Pageable): Page<Comment>
     fun findByNameContainingIgnoreCase(name: String, pageable: Pageable): Page<Comment>
+
+    fun findByTextContainingIgnoreCase(text: String, pageable: Pageable): Page<Comment>
 }
