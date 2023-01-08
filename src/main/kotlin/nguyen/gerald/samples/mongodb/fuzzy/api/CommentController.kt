@@ -5,6 +5,7 @@ import nguyen.gerald.samples.mongodb.fuzzy.data.CommentRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.mongodb.core.query.TextCriteria
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -33,7 +34,7 @@ class CommentController {
             !name.isNullOrBlank() ->
                 result = commentRepository.findByNameContainingIgnoreCase(name, pageable)
             !text.isNullOrBlank() ->
-                result = commentRepository.findByTextContainingIgnoreCase(text, pageable)
+                result = commentRepository.findAllBy(TextCriteria.forDefaultLanguage().matching(text), pageable)
             else ->
                 result = commentRepository.findAll(pageable)
         }
