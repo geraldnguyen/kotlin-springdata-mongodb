@@ -16,6 +16,7 @@ class CommentController {
     @GetMapping(value = [ "", "/" ])
     fun listAll(
         @RequestParam(value = "email", required = false) email: String?,
+        @RequestParam(value = "name", required = false) name: String?,
         @RequestParam(value = "_size", required = false, defaultValue = "10") size: Int,
         @RequestParam(value = "_page", required = false, defaultValue = "0") page: Int
     ): List<Comment> {
@@ -25,6 +26,8 @@ class CommentController {
         when {
             !email.isNullOrBlank() ->
                 result = commentRepository.findByEmailIgnoreCase(email, pageable)
+            !name.isNullOrBlank() ->
+                result = commentRepository.findByNameContainingIgnoreCase(name, pageable)
             else ->
                 result = commentRepository.findAll(pageable)
         }
